@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using clubmembership.Repository;
+using System.ComponentModel.DataAnnotations;
 
 namespace clubmembership.Models
 {
@@ -15,5 +16,6 @@ namespace clubmembership.Models
         [DataType(DataType.Date)]
         public DateTime DateTimeAdded { get; set; }
         public bool IsPublished { get; set; }
+
     }
 }

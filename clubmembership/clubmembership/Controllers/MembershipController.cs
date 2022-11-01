@@ -16,13 +16,15 @@ namespace clubmembership.Controllers
         // GET: MembershipController
         public ActionResult Index()
         {
-            return View();
+            var list = membershipRepository.GetAllMemberships();
+            return View(list);
         }
 
         // GET: MembershipController/Details/5
-        public ActionResult Details(int id)
+        public ActionResult Details(Guid id)
         {
-            return View();
+            var model = membershipRepository.GetMembershipById(id);
+            return View("DetailsMembership", model);
         }
 
         // GET: MembershipController/Create
@@ -54,44 +56,54 @@ namespace clubmembership.Controllers
         }
 
         // GET: MembershipController/Edit/5
-        public ActionResult Edit(int id)
+        public ActionResult Edit(Guid id)
         {
-            return View();
+            var model = membershipRepository.GetMembershipById(id);
+            return View("EditMembership", model);
         }
 
         // POST: MembershipController/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit(int id, IFormCollection collection)
+        public ActionResult Edit(Guid id, IFormCollection collection)
         {
             try
             {
-                return RedirectToAction(nameof(Index));
+                var model = new MembershipModel();
+                var task = TryUpdateModelAsync(model);
+                task.Wait();
+                if (task.Result)
+                {
+                    membershipRepository.UpdateMembership(model);
+                }
+                return RedirectToAction("Index");
             }
             catch
             {
-                return View();
+                return RedirectToAction("Edit", id);
             }
         }
 
         // GET: MembershipController/Delete/5
-        public ActionResult Delete(int id)
+        public ActionResult Delete(Guid id)
         {
-            return View();
+            var model = membershipRepository.GetMembershipById(id);
+            return View("DeleteMembership", model);
         }
 
         // POST: MembershipController/Delete/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Delete(int id, IFormCollection collection)
+        public ActionResult Delete(Guid id, IFormCollection collection)
         {
             try
             {
-                return RedirectToAction(nameof(Index));
+                membershipRepository.DeleteMembership(id);
+                return RedirectToAction("Index");
             }
             catch
             {
-                return View();
+                return RedirectToAction("Delete", id);
             }
         }
     }

@@ -1,8 +1,10 @@
 ﻿using clubmembership.Data;
 using clubmembership.Models;
 using clubmembership.Repository;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using System.Data;
 
 namespace clubmembership.Controllers
 {
@@ -85,6 +87,9 @@ namespace clubmembership.Controllers
         }
 
         // GET: AnnouncementController/Delete/5
+
+        [Authorize(Roles = "User, Admin")]
+
         public ActionResult Delete(Guid id)
         {
             var model = announcementRepository.GetAnnouncementById(id);

@@ -4,22 +4,22 @@ using clubmembership.Models.DBObjects;
 
 namespace clubmembership.Repository
 {
-    public class MembershipTypesRepository
+    public class MembershipTypeRepository
     {
         private readonly ApplicationDbContext _DBContext;
 
-        public MembershipTypesRepository()
+        public MembershipTypeRepository()
         {
             _DBContext = new ApplicationDbContext();
         }
-        public MembershipTypesRepository(ApplicationDbContext dBContext)
+        public MembershipTypeRepository(ApplicationDbContext dBContext)
         {
             _DBContext = dBContext;
         }
 
-        private MembershipTypesModel MapDBObjectToModel(MembershipType dbobject)
+        private MembershipTypeModel MapDBObjectToModel(MembershipType dbobject)
         {
-            var model = new MembershipTypesModel();
+            var model = new MembershipTypeModel();
             if (dbobject != null)
             {
                 model.IdmembershipType = dbobject.IdmembershipType;
@@ -30,7 +30,7 @@ namespace clubmembership.Repository
             return model;
         }
 
-        private MembershipType MapModelToDBObject(MembershipTypesModel model)
+        private MembershipType MapModelToDBObject(MembershipTypeModel model)
         {
             var dbobject = new MembershipType();
             if (model != null)
@@ -43,26 +43,26 @@ namespace clubmembership.Repository
             return dbobject;
         }
 
-        public List<MembershipTypesModel> GetAllMembershipTypes()
+        public List<MembershipTypeModel> GetAllMembershipTypes()
         {
-            var list = new List<MembershipTypesModel>();
+            var list = new List<MembershipTypeModel>();
             foreach (var dbobject in _DBContext.MembershipTypes)
             {
                 list.Add(MapDBObjectToModel(dbobject));
             }
             return list;
         }
-        public MembershipTypesModel GetMembershipTypeById(Guid id)
+        public MembershipTypeModel GetMembershipTypeById(Guid id)
         {
             return MapDBObjectToModel(_DBContext.MembershipTypes.FirstOrDefault(x => x.IdmembershipType == id));
         }
-        public void InsertMembershipType(MembershipTypesModel model)
+        public void InsertMembershipType(MembershipTypeModel model)
         {
             model.IdmembershipType = Guid.NewGuid();
             _DBContext.MembershipTypes.Add(MapModelToDBObject(model));
             _DBContext.SaveChanges();
         }
-        public void UpdateMembershipType(MembershipTypesModel model)
+        public void UpdateMembershipType(MembershipTypeModel model)
         {
             var dbobject = _DBContext.MembershipTypes.FirstOrDefault(x => x.IdmembershipType == model.IdmembershipType);
             if (dbobject != null)
@@ -74,9 +74,9 @@ namespace clubmembership.Repository
                 _DBContext.SaveChanges();
             }
         }
-        public void DeleteMembershipType(MembershipTypesModel model)
+        public void DeleteMembershipType(Guid id)
         {
-            var dbobject = _DBContext.MembershipTypes.FirstOrDefault(x => x.IdmembershipType == model.IdmembershipType);
+            var dbobject = _DBContext.MembershipTypes.FirstOrDefault(x => x.IdmembershipType == id);
             if (dbobject != null)
             {
                 //cascade Delete

@@ -1,6 +1,6 @@
 ﻿namespace clubmembership.Models
 {
-    public class MembershipTypesModel
+    public class MembershipTypeModel
     {
         public Guid IdmembershipType { get; set; }
         public string Name { get; set; } = null!;

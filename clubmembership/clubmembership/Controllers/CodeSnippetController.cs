@@ -1,6 +1,7 @@
 ﻿using clubmembership.Data;
 using clubmembership.Models;
 using clubmembership.Repository;
+using clubmembership.ViewModel;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
@@ -20,13 +21,22 @@ namespace clubmembership.Controllers
         // GET: CodeSnippetController
         public ActionResult Index()
         {
-            return View();
+            var list = codeSnippetRepository.GetAllCodeSnippets();
+            var viewmodellist = new List<CodeSnippetViewModel>();
+            foreach(var codesnippet in list)
+            {
+                viewmodellist.Add(new CodeSnippetViewModel(codesnippet, memberRepository));
+                
+            }
+            return View(list);
         }
 
         // GET: CodeSnippetController/Details/5
-        public ActionResult Details(int id)
+        public ActionResult Details(Guid id)
         {
-            return View();
+            var model = codeSnippetRepository.GetCodeSnippetById(id);
+            return View("DetailsCodeSnippet", model);
+
         }
 
         // GET: CodeSnippetController/Create
@@ -36,6 +46,9 @@ namespace clubmembership.Controllers
             //SelectList memberList = new SelectList(members.Select(x => new SelectListItem( x.Name, x.Idmember.ToString())) );
             var memberList = members.Select(x => new SelectListItem( x.Name, x.Idmember.ToString()));
             ViewBag.MemberList = memberList;
+            //var model = new CodeSnippetModel();
+            ViewBag.lastCodeSnippetversion = codeSnippetRepository.GetLatestCodeSnippet().IdcodeSnippet.ToString();
+            //model.IdsnippetPreviousVersion = codeSnippetRepository.GetLatestCodeSnippet().IdcodeSnippet;
             return View("CreateCodeSnippet");
         }
 
@@ -62,44 +75,56 @@ namespace clubmembership.Controllers
         }
 
         // GET: CodeSnippetController/Edit/5
-        public ActionResult Edit(int id)
+        public ActionResult Edit(Guid id)
         {
-            return View();
+            var model = codeSnippetRepository.GetCodeSnippetById(id);
+            return View("EditCodeSnippet", model);
+
         }
 
         // POST: CodeSnippetController/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit(int id, IFormCollection collection)
+        public ActionResult Edit(Guid id, IFormCollection collection)
         {
             try
             {
-                return RedirectToAction(nameof(Index));
+                var model = new CodeSnippetModel();
+                var task = TryUpdateModelAsync(model);
+                task.Wait();
+                if (task.Result)
+                {
+                    codeSnippetRepository.UpdateCodeSnippet(model);
+                }
+                return RedirectToAction("Index");
             }
             catch
             {
-                return View();
+                return RedirectToAction("Edit", id);
             }
         }
 
+
         // GET: CodeSnippetController/Delete/5
-        public ActionResult Delete(int id)
+        public ActionResult Delete(Guid id)
         {
-            return View();
+            var model = codeSnippetRepository.GetCodeSnippetById(id);
+            return View("DeleteCodeSnippet", model);
         }
 
         // POST: CodeSnippetController/Delete/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Delete(int id, IFormCollection collection)
+        public ActionResult Delete(Guid id, IFormCollection collection)
         {
             try
             {
-                return RedirectToAction(nameof(Index));
+                codeSnippetRepository.DeleteCodeSnippet(id);
+                return RedirectToAction("Index");
             }
             catch
             {
-                return View();
+                return RedirectToAction("Delete", id);
             }
         }
     }

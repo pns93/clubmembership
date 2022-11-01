@@ -80,9 +80,9 @@ namespace clubmembership.Repository
                 _DBContext.SaveChanges();
             }
         }
-        public void DeleteMembership(MembershipModel model)
+        public void DeleteMembership(Guid id)
         {
-            var dbobject = _DBContext.Memberships.FirstOrDefault(x => x.Idmembership == model.Idmembership);
+            var dbobject = _DBContext.Memberships.FirstOrDefault(x => x.Idmembership == id);
             if (dbobject != null)
             {
                 _DBContext.Memberships.Remove(dbobject);
